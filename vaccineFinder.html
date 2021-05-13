@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+	function fetchData() {
+		var pin = document.getElementById("pincode").value;
+		var date = new Date();
+		var month = date.getMonth() + 1;
+		var formatDate;
+		if (month.toString().length == 2) {
+			formatDate = date.getDate() + "-" + month + "-" + date.getFullYear();
+		} else {
+			formatDate = date.getDate() + "-0" + month + "-" + date.getFullYear();
+		}		
+		if(!/^[0-9]+$/.test(pin)) {
+			alert("Please enter valid pincode!");
+		} else {
+			setTimeout(
+				() => myFunction(pin, formatDate),
+				2000)
+		}
+	}
+	function myFunction(pin, formatDate) {
+		fetch('https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode='+pin+'&date='+formatDate)
+			.then(response => response.json())
+			.then(data => sendNotification(data));			
+	}
+	function sendNotification(data) {
+		if (data != undefined) {
+			document.getElementById("object").innerHTML = JSON.stringify(data);			
+		}
+	}
+</script>
+</head>
+<body>
+<label>Pincode: </label>
+<input type="text" id="pincode">
+<button onclick="fetchData()">Submit</button>
+<h2 id="object">Content</h2>
+</body>
+</html>
